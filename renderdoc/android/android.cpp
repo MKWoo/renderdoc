@@ -320,7 +320,7 @@ bool CheckAndroidServerVersion(const rdcstr &deviceID, ABI abi)
   RDCWARN("RenderDoc server versionCode:versionName (%s:%s) is incompatible with host (%s:%s)",
           versionCode.c_str(), versionName.c_str(), hostVersionCode.c_str(), hostVersionName.c_str());
 
-  return false;
+  return true;
 }
 
 ReplayStatus InstallRenderDocServer(const rdcstr &deviceID)

@@ -1,3 +1,6 @@
+
+set(ANDROID_STL "c++_shared")
+include(ndk-stl-config.cmake)
 set(sources renderdoccmd.cpp)
 set(includes PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty ${CMAKE_SOURCE_DIR}/renderdoc/api)
 set(libraries PRIVATE renderdoc)
@@ -44,6 +47,8 @@ elseif(UNIX)
     set(LINKER_FLAGS "-Wl,--no-as-needed")
 endif()
 
+
+
 if(ANDROID)
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${LINKER_FLAGS}")
     add_library(renderdoccmd SHARED ${sources})
@@ -76,9 +81,9 @@ if(ANDROID)
     # then invoke FindJava.cmake which will search just the PATH, then re-set it.
     set(SAVE_JAVA_HOME $ENV{JAVA_HOME})
 
-    set(ENV{JAVA_HOME} "")
+    #set(ENV{JAVA_HOME} "")
     find_package(Java REQUIRED)
-    set(ENV{JAVA_HOME} ${SAVE_JAVA_HOME})
+    #set(ENV{JAVA_HOME} ${SAVE_JAVA_HOME})
 
     if(${Java_VERSION} VERSION_LESS 1.8)
         message(FATAL_ERROR "Building Android requires the 'java' program in your PATH to be at least Java 8 (1.8)")
@@ -173,6 +178,9 @@ if(ANDROID)
     endif()
 
     set(APK_FILE ${CMAKE_BINARY_DIR}/bin/${RENDERDOC_ANDROID_PACKAGE_NAME}.apk)
+	
+		message("mk------------------xx:${CMAKE_BINARY_DIR}/bin/${RENDERDOC_ANDROID_PACKAGE_NAME}.apk")
+		
     add_custom_target(apk ALL
                       DEPENDS ${APK_FILE})
 
@@ -189,8 +197,13 @@ if(ANDROID)
                        COMMAND ${CMAKE_COMMAND} -E make_directory libs/lib/${ANDROID_ABI}
                        COMMAND ${CMAKE_COMMAND} -E make_directory obj
                        COMMAND ${CMAKE_COMMAND} -E make_directory bin
+					   #message("---------------------------------xx:${CMAKE_CURRENT_BINARY_DIR}")
                        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:renderdoc> libs/lib/${ANDROID_ABI}/$<TARGET_FILE_NAME:renderdoc>
                        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:renderdoccmd> libs/lib/${ANDROID_ABI}/$<TARGET_FILE_NAME:renderdoccmd>
+					   
+					   #COMMAND ${CMAKE_COMMAND} -E copy ${WORKING_DIRECTORY}../lib/libc++_shared.so /libs/lib/${ANDROID_ABI}/libc++_shared.so>
+					   
+					   
                        COMMAND ${BUILD_TOOLS}/aapt package -f -m -S res -J src -M AndroidManifest.xml -I ${ANDROID_JAR}
                        COMMAND ${JAVA_BIN}/javac -d ./obj -source 1.7 -target 1.7 -bootclasspath ${RT_JAR} -classpath "${CLASS_PATH}" -sourcepath src src/org/renderdoc/renderdoccmd/*.java
                        COMMAND ${BUILD_TOOLS}/dx${TOOL_SCRIPT_EXTENSION} --dex --output=bin/classes.dex ./obj

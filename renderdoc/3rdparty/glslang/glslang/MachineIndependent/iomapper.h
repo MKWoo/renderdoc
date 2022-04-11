@@ -225,6 +225,12 @@ protected:
 
 typedef std::map<TString, TVarEntryInfo> TVarLiveMap;
 
+#ifdef RENDERDOC_PLATFORM_ANDROID
+#pragma GCC diagnostic ignored "-Wdeprecated-copy"
+#endif // 0
+
+
+
 // override function "operator=", if a vector<const _Kty, _Ty> being sort,
 // when use vc++, the sort function will call :
 // pair& operator=(const pair<_Other1, _Other2>& _Right)
